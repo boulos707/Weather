@@ -1,20 +1,24 @@
 "use client";
 
 import { useState } from "react";
-import styles from "./Home.module.css";
+import styles from "./Home.module.css"; 
 
 export default function Home() {
   const [city, setCity] = useState("");
   const [weather, setWeather] = useState(null);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!city) {
-      setError("Please enter your city");
+    
+    if (!city.trim()) {
+      setError("Please enter your city.");
       return;
     }
+
+    setError("");
+    setLoading(true);
 
     try {
       const res = await fetch(`/api/weather?query=${city}`);
@@ -22,12 +26,13 @@ export default function Home() {
 
       if (res.ok) {
         setWeather(data);
-        setError("");
       } else {
         setError(data.message || "An error occurred while fetching weather data.");
       }
     } catch (error) {
-      setError("Error fetching weather data");
+      setError("Error fetching weather data. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -41,9 +46,10 @@ export default function Home() {
           value={city}
           onChange={(e) => setCity(e.target.value)}
           className={styles.input}
+          aria-label="City Name"
         />
-        <button type="submit" className={styles.button}>
-          Get Weather
+        <button type="submit" className={styles.button} disabled={loading}>
+          {loading ? "Fetching..." : "Get Weather"}
         </button>
       </form>
 
