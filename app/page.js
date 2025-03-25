@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import styles from "./Home.module.css"; 
+import styles from "./home.module.css"; 
 
 export default function Home() {
   const [city, setCity] = useState("");
